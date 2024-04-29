@@ -1,0 +1,20 @@
+from pymatreader import read_mat
+data = read_mat('Spike/artificial_data_snoise_0.5_seed_0.mat')
+spike_class = data['truth']['neuronTags']
+signal_data = data['signal']['data']
+dt = data['signal']['dt']
+spike_times = np.round(data['truth']['timeStamps'] / dt).astype(int)
+num_spike = len(spike_times)
+num_sample_forward = 50
+num_sample_backward = 30
+spike_curve = np.zeros((num_spike, num_sample_forward - num_sample_backward))
+
+# Extract the spike curves
+for i in range(num_spike):
+    spike_curve[i] = signal_data[(spike_times[i] + num_sample_backward):(spike_times[i] + num_sample_forward)]
+plt.figure(figsize=(20,10))
+for i in range(num_spike):
+    plt.plot(spike_curve[i],linewidth=0.4)
+plt.xticks(fontsize=8)
+plt.xlabel('sample',color='red')
+plt.ylabel('uV',color='red')
