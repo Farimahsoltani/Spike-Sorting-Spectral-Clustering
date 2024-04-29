@@ -1,0 +1,15 @@
+def apply_gradient(data, n=1):
+    if n < 1:
+        return data
+    for i in range(n):
+        data = np.gradient(data, axis=1)
+    return data
+def calculate_accuracy(true_labels, predicted_labels):
+    n_classes = len(np.unique(true_labels))
+    cost_matrix = np.zeros((n_classes, n_classes))
+    for i in range(n_classes):
+        for j in range(n_classes):
+            cost_matrix[i, j] = np.sum((predicted_labels == i+1) & (true_labels == j+1))
+    row_ind, col_ind = linear_sum_assignment(-cost_matrix)
+    accuracy = cost_matrix[row_ind, col_ind].sum() / len(true_labels)
+    return accuracy
