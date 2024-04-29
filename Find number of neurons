@@ -1,0 +1,64 @@
+def optimal_gradient_order(data, labels, n_clusters_range=range(2, 6), gradient_order_range=range(0, 11)):
+    all_accuracies = []
+    all_silhouette_scores = []
+    all_ch_scores = []
+    for n_clusters in n_clusters_range:
+        gmm_original = GaussianMixture(n_components=n_clusters)
+        gmm_original.fit(data)
+        cluster_labels_original = gmm_original.predict(data)
+        original_data_accuracy = calculate_accuracy(labels, cluster_labels_original+1)
+        for order in gradient_order_range:
+          warnings.simplefilter(action='ignore', category=UserWarning)
+          #TT = SpectralEmbedding(n_components=2).fit_transform(apply_gradient(data,order))
+          TT = UMAP(n_neighbors=400).fit_transform(apply_gradient(data,order))
+          clustering = AgglomerativeClustering(n_clusters=n_clusters).fit(TT)
+          cluster_labels = clustering.labels_+1
+          accuracy = calculate_accuracy(labels, cluster_labels)
+          all_accuracies.append(accuracy)
+          silhouette = silhouette_score(TT, cluster_labels)
+          all_silhouette_scores.append(silhouette)
+          print(f"Accuracy for order {order} with {n_clusters} clusters is {accuracy}, Silhouette Score is {silhouette}")
+
+    return  all_accuracies, all_silhouette_scores, all_ch_scores
+
+all_accuracies, all_silhouette_scores, all_ch_scores = optimal_gradient_order(spike_curve, spike_classes)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def optimal_gradient_order(data, labels, n_clusters_range=range(2, 6), gradient_order_range=range(0, 11)):
+    all_accuracies = []
+    all_silhouette_scores = []
+    all_ch_scores = []
+    for n_clusters in n_clusters_range:
+        gmm_original = GaussianMixture(n_components=n_clusters)
+        gmm_original.fit(data)
+        cluster_labels_original = gmm_original.predict(data)
+        original_data_accuracy = calculate_accuracy(labels, cluster_labels_original+1)
+        for order in gradient_order_range:
+          warnings.simplefilter(action='ignore', category=UserWarning)
+          TT = SpectralEmbedding(n_components=2).fit_transform(apply_gradient(data,order))
+          #TT = UMAP(n_neighbors=100).fit_transform(apply_gradient(data,order))
+          clustering = AgglomerativeClustering(n_clusters=n_clusters).fit(TT)
+          cluster_labels = clustering.labels_+1
+          accuracy = calculate_accuracy(labels, cluster_labels)
+          all_accuracies.append(accuracy)
+          silhouette = silhouette_score(TT, cluster_labels)
+          all_silhouette_scores.append(silhouette)
+          print(f"Accuracy for order {order} with {n_clusters} clusters is {accuracy}, Silhouette Score is {silhouette}")
+
+    return  all_accuracies, all_silhouette_scores, all_ch_scores
+
+all_accuracies, all_silhouette_scores, all_ch_scores = optimal_gradient_order(spike_curve, spike_classes)
